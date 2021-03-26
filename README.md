@@ -1,1 +1,1 @@
-Just me personally experimenting with [minisat](https://minisat.se)
+Just me personally experimenting with [minisat](http://minisat.se)
