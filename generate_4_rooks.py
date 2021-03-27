@@ -4,10 +4,29 @@
 from itertools import combinations
 
 # Take the 3x3 coords to individual variables
-def linear_coord_from_x_y(x, y):
-    return x * 4 + y + 1
+#
+# Done by just handing out memoized sequential
+# naturals instead of being witty because this
+# generalizes
+#
+# Don't output 0 since that can't be negated
+# in the cnf input
+# 
+# Lots of interesting choices for static variable at
+# https://stackoverflow.com/questions/279561/what-is-the-python-equivalent-of-static-variables-inside-a-function
+# I choose raising an exception
+def var_from_x_y(x, y):
+    try:
+        return var_from_x_y.already_given[(x, y)]
+    except AttributeError:
+        var_from_x_y.already_given = {(x, y): 1}
+        return 1
+    except KeyError:
+        new_var = len(var_from_x_y.already_given) + 1
+        var_from_x_y.already_given[(x, y)] = new_var
+        return new_var
 
-f = linear_coord_from_x_y
+f = var_from_x_y
 
 
 def col_coords(col_num):
@@ -45,23 +64,42 @@ if __name__ == "__main__":
 # Unit tests
 ############
 
-def test_linear_coord_from_x_y():
-    assert linear_coord_from_x_y(0, 0) == 1
-    assert linear_coord_from_x_y(0, 1) == 2
-    assert linear_coord_from_x_y(0, 2) == 3
-    assert linear_coord_from_x_y(0, 3) == 4
-    assert linear_coord_from_x_y(1, 0) == 5
-    assert linear_coord_from_x_y(1, 1) == 6
-    assert linear_coord_from_x_y(1, 2) == 7
-    assert linear_coord_from_x_y(1, 3) == 8
-    assert linear_coord_from_x_y(2, 0) == 9
-    assert linear_coord_from_x_y(2, 1) == 10
-    assert linear_coord_from_x_y(2, 2) == 11
-    assert linear_coord_from_x_y(2, 3) == 12
-    assert linear_coord_from_x_y(3, 0) == 13
-    assert linear_coord_from_x_y(3, 1) == 14
-    assert linear_coord_from_x_y(3, 2) == 15
-    assert linear_coord_from_x_y(3, 3) == 16
+def test_var_from_x_y():
+
+    # Random order to test memoization
+    assert var_from_x_y(0, 3) == 1
+    assert var_from_x_y(3, 3) == 2
+    assert var_from_x_y(0, 0) == 3
+    assert var_from_x_y(2, 2) == 4
+    assert var_from_x_y(2, 3) == 5
+    assert var_from_x_y(3, 1) == 6
+    assert var_from_x_y(1, 3) == 7
+    assert var_from_x_y(3, 0) == 8
+    assert var_from_x_y(2, 0) == 9
+    assert var_from_x_y(1, 2) == 10
+    assert var_from_x_y(3, 2) == 11
+    assert var_from_x_y(0, 2) == 12
+    assert var_from_x_y(0, 1) == 13
+    assert var_from_x_y(2, 1) == 14
+    assert var_from_x_y(1, 0) == 15
+    assert var_from_x_y(1, 1) == 16
+
+    assert var_from_x_y(0, 0) == 3
+    assert var_from_x_y(0, 1) == 13
+    assert var_from_x_y(0, 2) == 12
+    assert var_from_x_y(0, 3) == 1
+    assert var_from_x_y(1, 0) == 15
+    assert var_from_x_y(1, 1) == 16
+    assert var_from_x_y(1, 2) == 10
+    assert var_from_x_y(1, 3) == 7
+    assert var_from_x_y(2, 0) == 9
+    assert var_from_x_y(2, 1) == 14
+    assert var_from_x_y(2, 2) == 4
+    assert var_from_x_y(2, 3) == 5
+    assert var_from_x_y(3, 0) == 8
+    assert var_from_x_y(3, 1) == 6
+    assert var_from_x_y(3, 2) == 11
+    assert var_from_x_y(3, 3) == 2
 
 
 def test_col_coords():
