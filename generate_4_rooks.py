@@ -41,8 +41,8 @@ def row_coords(row_num):
 
 def exactly_1_true(variables):
     yield set(variables)
-    for variable in variables:
-        yield set([-x for x in set(variables).difference([variable])]).union([variable])
+    for pair in combinations(variables, 2):
+        yield set([-x for x in pair])
 
 
 def cnf_output(clauses):
@@ -122,8 +122,8 @@ def test_exactly_1_true():
     assert list(exactly_1_true((1, 2, 3,))) == [
         set([1, 2, 3,]),
         set([-1, -2,]),
-        set([-2, -3,]),
         set([-1, -3,]),
+        set([-2, -3,]),
     ]
     assert list(exactly_1_true((1, 2, 3, 4,))) == [
         set([1, 2, 3, 4,]),
