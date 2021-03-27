@@ -103,16 +103,16 @@ def test_var_from_x_y():
 
 
 def test_col_coords():
-    assert tuple(col_coords(0)) == (1, 2, 3, 4)
-    assert tuple(col_coords(1)) == (5, 6, 7, 8)
-    assert tuple(col_coords(2)) == (9, 10, 11, 12)
-    assert tuple(col_coords(3)) == (13, 14, 15, 16)
+    assert tuple(col_coords(0)) == (f(0, 0), f(0, 1), f(0, 2), f(0, 3))
+    assert tuple(col_coords(1)) == (f(1, 0), f(1, 1), f(1, 2), f(1, 3))
+    assert tuple(col_coords(2)) == (f(2, 0), f(2, 1), f(2, 2), f(2, 3))
+    assert tuple(col_coords(3)) == (f(3, 0), f(3, 1), f(3, 2), f(3, 3))
 
 def test_row_coords():
-    assert tuple(row_coords(0)) == (1, 5, 9, 13)
-    assert tuple(row_coords(1)) == (2, 6, 10, 14)
-    assert tuple(row_coords(2)) == (3, 7, 11, 15)
-    assert tuple(row_coords(3)) == (4, 8, 12, 16)
+    assert tuple(row_coords(0)) == (f(0, 0), f(1, 0), f(2, 0), f(3, 0))
+    assert tuple(row_coords(1)) == (f(0, 1), f(1, 1), f(2, 1), f(3, 1))
+    assert tuple(row_coords(2)) == (f(0, 2), f(1, 2), f(2, 2), f(3, 2))
+    assert tuple(row_coords(3)) == (f(0, 3), f(1, 3), f(2, 3), f(3, 3))
 
 def test_exactly_1_true():
     assert list(exactly_1_true((1, 2,))) == [
