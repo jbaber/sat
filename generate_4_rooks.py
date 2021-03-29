@@ -44,6 +44,16 @@ def exactly_1_true(variables):
         yield set([-x for x in pair])
 
 
+def at_least_n_true(n, variables):
+    difference = len(variables) - n
+    if difference < 0:
+        raise ValueError("Can't have {} true when only {} variables given.".format(n, len(variables)))
+    else:
+        for combo in combinations(variables, difference + 1):
+            yield combo
+
+
+
 def cnf_output(clauses):
     to_return = []
     for clause in clauses:
