@@ -39,9 +39,9 @@ def row_coords(row_num):
 
 
 def exactly_1_true(variables):
-    yield set(variables)
+    yield tuple(variables)
     for pair in combinations(variables, 2):
-        yield set([-x for x in pair])
+        yield tuple([-x for x in pair])
 
 
 def at_least_n_true(n, variables):
