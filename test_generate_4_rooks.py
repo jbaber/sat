@@ -73,74 +73,48 @@ def test_exactly_1_true():
     ]
 
 def test_at_least_n_true():
-    assert list(g.exactly_n_true(0, (1,))) == [
-        set([-1,]),
+    assert list(g.at_least_n_true(0, (1,))) == [
     ]
-    assert list(g.exactly_n_true(1, (1,))) == [
+    assert list(g.at_least_n_true(1, (1,))) == [
         set([1,]),
     ]
-    assert list(g.exactly_n_true(0, (1, 2,))) == [
-        set([-1,]),
-        set([-2,]),
+    assert list(g.at_least_n_true(0, (1, 2,))) == [
     ]
-    assert list(g.exactly_n_true(1, (1, 2,))) == [
+    assert list(g.at_least_n_true(1, (1, 2,))) == [
         set([1, 2,]),
-        set([-1, -2,]),
     ]
-    assert list(g.exactly_n_true(2, (1, 2,))) == [
+    assert list(g.at_least_n_true(2, (1, 2,))) == [
         set([1,]),
         set([2,]),
     ]
-    assert list(g.exactly_n_true(0, (1, 2, 3,))) == [
-        set([-1,]),
-        set([-2,]),
-        set([-3,]),
+    assert list(g.at_least_n_true(0, (1, 2, 3,))) == [
     ]
-    assert list(g.exactly_n_true(1, (1, 2, 3,))) == [
+    assert list(g.at_least_n_true(1, (1, 2, 3,))) == [
         set([1, 2, 3,]),
-        set([-1, -2,]),
-        set([-1, -3,]),
-        set([-2, -3,]),
     ]
-    assert list(g.exactly_n_true(2, (1, 2, 3,))) == [
-        set([-1, -2, -3,]),
+    assert list(g.at_least_n_true(2, (1, 2, 3,))) == [
         set([1, 2,]),
         set([1, 3,]),
         set([2, 3,]),
     ]
-    assert list(g.exactly_n_true(3, (1, 2, 3,))) == [
+    assert list(g.at_least_n_true(3, (1, 2, 3,))) == [
         set([1,]),
         set([2,]),
         set([3,]),
     ]
 
-    assert list(g.exactly_n_true(0, (1, 2, 3, 4,))) == [
-        set([-1,]),
-        set([-2,]),
-        set([-3,]),
-        set([-4,]),
+    assert list(g.at_least_n_true(0, (1, 2, 3, 4,))) == [
     ]
-    assert list(g.exactly_n_true(1, (1, 2, 3, 4,))) == [
+    assert list(g.at_least_n_true(1, (1, 2, 3, 4,))) == [
         set([1, 2, 3, 4,]),
-        set([-1, -2,]),
-        set([-1, -3,]),
-        set([-1, -4,]),
-        set([-2, -3,]),
-        set([-2, -4,]),
-        set([-3, -4,]),
     ]
-    assert list(g.exactly_n_true(2, (1, 2, 3, 4,))) == [
+    assert list(g.at_least_n_true(2, (1, 2, 3, 4,))) == [
         set([1, 2, 3,]),
         set([1, 2, 4,]),
         set([1, 3, 4,]),
         set([2, 3, 4,]),
-        set([-1, -2, -3,]),
-        set([-1, -2, -4,]),
-        set([-1, -3, -4,]),
-        set([-2, -3, -4,]),
     ]
-    assert list(g.exactly_n_true(3, (1, 2, 3, 4,))) == [
-        set([-1, -2, -3, -4,]),
+    assert list(g.at_least_n_true(3, (1, 2, 3, 4,))) == [
         set([1, 2,]),
         set([1, 3,]),
         set([1, 4,]),
@@ -148,7 +122,7 @@ def test_at_least_n_true():
         set([2, 4,]),
         set([3, 4,]),
     ]
-    assert list(g.exactly_n_true(4, (1, 2, 3, 4,))) == [
+    assert list(g.at_least_n_true(4, (1, 2, 3, 4,))) == [
         set([1,]),
         set([2,]),
         set([3,]),
@@ -156,9 +130,9 @@ def test_at_least_n_true():
     ]
 
     with pytest.raises(ValueError):
-        g.exactly_n_true(4, (1, 2, 3))
+        g.at_least_n_true(4, (1, 2, 3))
     with pytest.raises(ValueError):
-        g.exactly_n_true(3, (1, 2, 3, 4))
+        g.at_least_n_true(3, (1, 2, 3, 4))
 
 
 
