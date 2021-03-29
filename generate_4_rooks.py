@@ -44,6 +44,13 @@ def exactly_1_true(variables):
         yield tuple([-x for x in pair])
 
 
+def at_most_n_true(n, variables):
+    if n > len(variables):
+        raise ValueError("Can't have {} true when only {} variables given.".format(n, len(variables)))
+    for combo in combinations(variables, n + 1):
+        yield tuple(-variable for variable in combo)
+
+
 def at_least_n_true(n, variables):
     difference = len(variables) - n
     if difference < 0:
