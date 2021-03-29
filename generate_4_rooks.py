@@ -45,6 +45,14 @@ def exactly_1_true(variables):
         yield tup
 
 
+def exactly_n_true(n, variables):
+    for tup in at_least_n_true(n, variables):
+        yield tup
+    for tup in at_most_n_true(n, variables):
+        yield tup
+
+
+
 def at_most_n_true(n, variables):
     if n > len(variables):
         raise ValueError("Can't have {} true when only {} variables given.".format(n, len(variables)))
@@ -70,7 +78,14 @@ def cnf_output(clauses):
 
 
 def main():
-    print(cnf_output(exactly_n_true(row_coords(0), 2)))
+    print(cnf_output(exactly_n_true(1, list(row_coords(0)))))
+    print(cnf_output(exactly_n_true(1, list(row_coords(1)))))
+    print(cnf_output(exactly_n_true(1, list(row_coords(2)))))
+    print(cnf_output(exactly_n_true(1, list(row_coords(3)))))
+    print(cnf_output(exactly_n_true(1, list(col_coords(0)))))
+    print(cnf_output(exactly_n_true(1, list(col_coords(1)))))
+    print(cnf_output(exactly_n_true(1, list(col_coords(2)))))
+    print(cnf_output(exactly_n_true(1, list(col_coords(3)))))
 
 
 if __name__ == "__main__":
