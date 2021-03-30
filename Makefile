@@ -13,7 +13,7 @@ solution:	particular_problem.cnf mergesat
 print_solution: sudoku.cnf solution
 	./interpret_solution.py $^
 
-.PHONY: clean
+.PHONY: clean print_solution
 
 clean:
 	rm -f sudoku.cnf particular_problem.cnf solution
