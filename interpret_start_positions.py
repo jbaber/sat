@@ -4,6 +4,43 @@ import sys
 import re
 
 
+ROW_COR = {
+    'a': 1,
+    'b': 2,
+    'c': 3,
+    'd': 4,
+    'e': 5,
+    'f': 6,
+    'g': 7,
+    'h': 8,
+    'i': 9,
+    'A': 1,
+    'B': 2,
+    'C': 3,
+    'D': 4,
+    'E': 5,
+    'F': 6,
+    'G': 7,
+    'H': 8,
+    'I': 9,
+}
+
+
+def get_start_positions(filename):
+    to_return = {}
+    with open(filename) as f:
+        for line in f:
+            line = line.strip()
+            try:
+                row_num = int(line[0])
+            except ValueError:
+                row_num = ROW_COR[line[0]]
+            col_num = int(line[1])
+            value   = int(line[2])
+            to_return[(row_num, col_num)] = value
+    return to_return
+
+
 def get_correspondence(filename):
     to_return = {}
     regex = re.compile(r'^c ([0-9]+): \(([0-9]+), ([0-9]+)\) is a ([0-9]+)')
@@ -16,7 +53,11 @@ def get_correspondence(filename):
     return to_return
 
 
+# def cnf_output(start_positions, correspondence):
+
+
 def plot_start_positions(start_positions):
+    s = {}
     to_return = """+-----+-----+-----+
 |{} {} {}|{} {} {}|{} {} {}|
 |{} {} {}|{} {} {}|{} {} {}|
@@ -30,42 +71,12 @@ def plot_start_positions(start_positions):
 |{} {} {}|{} {} {}|{} {} {}|
 |{} {} {}|{} {} {}|{} {} {}|
 +-----+-----+-----+"""
-    s = {}
     for i in range(0, 10):
         for j in range(0, 10):
             s[(i, j)] = ' '
 
-    row_cor = {
-        'a': 1,
-        'b': 2,
-        'c': 3,
-        'd': 4,
-        'e': 5,
-        'f': 6,
-        'g': 7,
-        'h': 8,
-        'i': 9,
-        'A': 1,
-        'B': 2,
-        'C': 3,
-        'D': 4,
-        'E': 5,
-        'F': 6,
-        'G': 7,
-        'H': 8,
-        'I': 9,
-    }
-
-
-
-    for start_val in start_positions:
-        try:
-            row_num = int(start_val[0])
-        except ValueError:
-            row_num = row_cor[start_val[0]]
-        col_num = int(start_val[1])
-        value   = int(start_val[2])
-        s[(row_num, col_num)] = value
+    for coords, value in start_positions.items():
+        s[coords] = value
 
     return to_return.format(
         s[(1, 1)], s[(1, 2)], s[(1, 3)], s[(1, 4)], s[(1, 5)], s[(1, 6)], s[(1, 7)], s[(1, 8)], s[(1, 9)],
@@ -88,12 +99,9 @@ def main():
 
     correspondence = get_correspondence(sys.argv[1])
 
-    with open(sys.argv[2]) as f:
-        start_positions = [
-            line.strip()
-            for line in f
-        ]
-    print(plot_start_positions(start_positions))
+    print(plot_start_positions(get_start_positions(sys.argv[2])))
+    print("\n-------\n")
+    # print(cnf_output(start_positions, correspondence))
 
 
 if __name__ == "__main__":
