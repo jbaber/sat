@@ -53,24 +53,41 @@ def get_correspondence(filename):
     return to_return
 
 
-# def cnf_output(start_positions, correspondence):
+def var_from_row_col_val(row, col, val, correspondence):
+    for var in correspondence:
+        _row = correspondence[var]['row_num']
+        _col = correspondence[var]['col_num']
+        _val = correspondence[var]['value']
+        if row == _row and col == _col and _val == val:
+            return var
+
+
+def cnf_output(start_positions, correspondence):
+    to_return = ""
+    for start_position in start_positions:
+        val = start_positions[start_position]
+        row = start_position[0]
+        col = start_position[1]
+        var = var_from_row_col_val(row, col, val, correspondence)
+        to_return += ("{} 0\n".format(var))
+    return to_return
 
 
 def plot_start_positions(start_positions):
     s = {}
-    to_return = """+-----+-----+-----+
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-+-----+-----+-----+
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-+-----+-----+-----+
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-|{} {} {}|{} {} {}|{} {} {}|
-+-----+-----+-----+"""
+    to_return = """c +-----+-----+-----+
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c +-----+-----+-----+
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c +-----+-----+-----+
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c |{} {} {}|{} {} {}|{} {} {}|
+c +-----+-----+-----+"""
     for i in range(0, 10):
         for j in range(0, 10):
             s[(i, j)] = ' '
@@ -99,9 +116,10 @@ def main():
 
     correspondence = get_correspondence(sys.argv[1])
 
-    print(plot_start_positions(get_start_positions(sys.argv[2])))
-    print("\n-------\n")
-    # print(cnf_output(start_positions, correspondence))
+    start_positions = get_start_positions(sys.argv[2])
+    print(plot_start_positions(start_positions))
+    print("\nc -------\n")
+    print(cnf_output(start_positions, correspondence))
 
 
 if __name__ == "__main__":
