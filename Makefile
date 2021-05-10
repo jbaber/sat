@@ -1,20 +1,19 @@
 all: print_solution
 
-sudoku.cnf:
-	./generate_sudoku.py > $@
+sudoku/sudoku.cnf:
+	sudoku/generate_sudoku.py > $@
 
-particular_problem.cnf: sudoku.cnf start_positions
+sudoku/particular_problem.cnf: sudoku/sudoku.cnf sudoku/start_positions
 	cp $< $@
-	./interpret_start_positions.py $< start_positions >> $@
+	sudoku/interpret_start_positions.py $< sudoku/start_positions >> $@
 
-solution:	particular_problem.cnf mergesat
+sudoku/solution:	sudoku/particular_problem.cnf mergesat
 	-./mergesat $< > $@
 
-print_solution: sudoku.cnf solution
-	./interpret_solution.py $^
+print_solution: sudoku/sudoku.cnf sudoku/solution
+	sudoku/interpret_solution.py $^
 
 .PHONY: clean print_solution
 
 clean:
-	rm -f sudoku.cnf particular_problem.cnf solution
-
+	rm -f sudoku/sudoku.cnf sudoku/particular_problem.cnf sudoku/solution
