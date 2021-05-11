@@ -80,13 +80,13 @@ def plot_solution(solution, correspondence, config):
 
     to_return = "<html><body><table>\n<tr>"
     to_return += "<th>&nbsp;</th>"
-    for period in periods:
-        to_return += f"<th>{period}</th>"
+    for course in courses:
+        to_return += f"<th>{course}</th>"
     to_return += "</tr>\n"
 
-    for course in courses:
-        to_return += f"<tr><td>{course}</td>"
-        for period in periods:
+    for period in periods:
+        to_return += f"<tr><td>{period}</td>"
+        for course in courses:
             to_return += "<td>"
             them = teachers_from_solution(period, course, solution, correspondence)
             to_return += ",".join(them)
