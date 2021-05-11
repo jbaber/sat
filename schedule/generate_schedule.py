@@ -114,10 +114,25 @@ def main():
     teachers = config["teachers"]
     periods = config["periods"]
 
-    # Each course offered at least once each period except lunch
-    for course in courses:
+    # Each non-Yearbook course offered at least once each period except lunch
+    for course in set(courses).difference({"Yearbook"}):
         for period in set(periods).difference({"Lunch"}):
             print(cnf_output([[f(period, teacher, course, config) for teacher in teachers]]))
+
+    # Yearbook is taught exactly once in periods 3 or 4
+    print(cnf_output(exactly_1_true([
+        f(period, teacher, "Yearbook", config)
+        for (period, teacher) in product(["3", "4",], teachers)
+    ])))
+
+    # Mrs. A can't teach Yearbook
+    is_this_printing = cnf_output([
+        [-f(period, "Mrs. A", "Yearbook", config)]
+        for period in periods
+    ])
+    print(is_this_printing, file=sys.stderr)
+    print(is_this_printing)
+
 
     # No teacher teaches two courses in one period
     for period in periods:
