@@ -5,8 +5,8 @@ all: print_sudoku_solution
 sudoku/sudoku.cnf:
 	sudoku/generate_sudoku.py > $@
 
-schedule/schedule.cnf:
-	schedule/generate_schedule.py > $@
+schedule/schedule.cnf: schedule/config.json
+	schedule/generate_schedule.py $< > $@
 
 sudoku/particular_problem.cnf: sudoku/sudoku.cnf sudoku/start_positions
 	cp $< $@
@@ -28,7 +28,7 @@ print_sudoku_solution: sudoku/sudoku.cnf sudoku/solution
 print_schedule_solution: schedule/temp.html
 	elinks --dump $^
 
-schedule/temp.html: schedule/schedule.cnf schedule/solution
+schedule/temp.html: schedule/schedule.cnf schedule/solution schedule/config.json
 	schedule/interpret_solution.py $^ > $@
 
 .PHONY: clean print_sudoku_solution print_schedule_solution

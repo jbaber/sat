@@ -2,6 +2,8 @@
 
 import sys
 import re
+import json
+
 
 def get_correspondence(filename):
     to_return = {}
@@ -68,13 +70,13 @@ def teachers_from_solution(period, course, solution, correspondence):
     ]
 
 
-def plot_solution(solution, correspondence):
+def plot_solution(solution, correspondence, config):
     if solution == None:
         print("Unsatisfiable")
         return
 
-    periods = periods_from_correspondence(correspondence)
-    courses = courses_from_correspondence(correspondence)
+    periods = config["periods"]
+    courses = config["courses"]
 
     to_return = "<html><body><table>\n<tr>"
     to_return += "<th>&nbsp;</th>"
@@ -104,14 +106,17 @@ def plot_solution(solution, correspondence):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: {} <cnf-file.cnf> <solution-file>".format(sys.argv[0]))
+    if len(sys.argv) != 4:
+        print("Usage: {} <cnf-file.cnf> <solution-file> <config.json>".format(sys.argv[0]))
         exit(1)
+
+    with open(sys.argv[3]) as f:
+        config = json.load(f)
 
     correspondence = get_correspondence(sys.argv[1])
 
     solution = get_solution(sys.argv[2])
-    print(plot_solution(solution, correspondence))
+    print(plot_solution(solution, correspondence, config))
 
 
 if __name__ == "__main__":

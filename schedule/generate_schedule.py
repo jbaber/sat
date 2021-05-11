@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
+import sys
+import json
 from itertools import combinations
 from itertools import product
-
-PERIODS = ("1", "2", "3", "4", "Lunch")
-TEACHERS = ("Mrs. A", "Mr. B", "Mrs. C", "Dr. D")
-COURSES = ("English 9", "English 10", "English 11")
 
 # Take schedule coords and value to individual variables
 #
@@ -19,13 +17,17 @@ COURSES = ("English 9", "English 10", "English 11")
 # Lots of interesting choices for static variable at
 # https://stackoverflow.com/questions/279561/what-is-the-python-equivalent-of-static-variables-inside-a-function
 # I choose raising an exception
-def var_from_period_teacher_course(period, teacher, course):
-    if teacher not in TEACHERS:
-        raise ValueError(f"{teacher} not in  {TEACHERS}")
-    if period not in PERIODS:
-        raise ValueError(f"{period} not in {PERIODS}")
-    if course not in COURSES:
-        raise ValueError(f"{course} not in {COURSES}")
+def var_from_period_teacher_course(period, teacher, course, config):
+    teachers = config["teachers"]
+    courses = config["courses"]
+    periods = config["periods"]
+
+    if teacher not in teachers:
+        raise ValueError(f"{teacher} not in  {teachers}")
+    if period not in periods:
+        raise ValueError(f"{period} not in {periods}")
+    if course not in courses:
+        raise ValueError(f"{course} not in {courses}")
 
     try:
         return var_from_period_teacher_course.already_given[(teacher, period, course)]
@@ -101,31 +103,42 @@ def cnf_output(clauses):
 
 def main():
 
+    if len(sys.argv) != 2:
+        print(f"Usage: {sys.argv[0]} <conf.json>")
+        exit(1)
+
+    with open(sys.argv[1]) as g:
+        config = json.load(g)
+
+    courses = config["courses"]
+    teachers = config["teachers"]
+    periods = config["periods"]
+
     # Each course offered at least once each period except lunch
-    for course in COURSES:
-        for period in set(PERIODS).difference({"Lunch"}):
-            print(cnf_output([[f(period, teacher, course) for teacher in TEACHERS]]))
+    for course in courses:
+        for period in set(periods).difference({"Lunch"}):
+            print(cnf_output([[f(period, teacher, course, config) for teacher in teachers]]))
 
     # No teacher teaches two courses in one period
-    for period in PERIODS:
-        for teacher in TEACHERS:
-            for course_pair in combinations(COURSES, 2):
+    for period in periods:
+        for teacher in teachers:
+            for course_pair in combinations(courses, 2):
                 print(
                     cnf_output(
-                        [[-f(period, teacher, course_pair[0]), -f(period, teacher, course_pair[1])]]
+                        [[-f(period, teacher, course_pair[0], config), -f(period, teacher, course_pair[1], config)]]
                     )
                 )
 
-    # Every teacher gets at least one period off
-    for teacher in TEACHERS:
-        rows = [[-f(period, teacher, course) for course in COURSES] for period in PERIODS]
+    # Every teacher gets at least one non-lunch period off
+    for teacher in teachers:
+        rows = [[-f(period, teacher, course, config) for course in set(courses).difference({"Lunch"})] for period in periods]
         for tup in product(*rows):
             print(cnf_output([tup]))
 
     # Nobody teaches during Lunch
     for tup in at_most_n_true(0, [
-        f("Lunch", teacher, course)
-        for (teacher, course) in product(TEACHERS, COURSES)
+        f("Lunch", teacher, course, config)
+        for (teacher, course) in product(teachers, courses)
     ]):
         print(cnf_output([tup]))
 
