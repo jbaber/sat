@@ -25,10 +25,13 @@ schedule/solution: schedule/particular_problem.cnf mergesat
 print_sudoku_solution: sudoku/sudoku.cnf sudoku/solution
 	sudoku/interpret_solution.py $^
 
-print_schedule_solution: schedule/schedule.cnf schedule/solution
-	schedule/interpret_solution.py $^
+print_schedule_solution: schedule/temp.html
+	elinks --dump $^
+
+schedule/temp.html: schedule/schedule.cnf schedule/solution
+	schedule/interpret_solution.py $^ > $@
 
 .PHONY: clean print_sudoku_solution print_schedule_solution
 
 clean:
-	rm -f sudoku/sudoku.cnf */particular_problem.cnf */solution schedule/schedule.cnf
+	rm -f sudoku/sudoku.cnf */particular_problem.cnf */solution schedule/schedule.cnf schedule/temp.html
