@@ -5,12 +5,12 @@ import re
 
 def get_correspondence(filename):
     to_return = {}
-    regex = re.compile(r'^c ([0-9]+): (.+) teaches (.+) period ([0-9]+)')
+    regex = re.compile(r'^c ([0-9]+): (.+) teaches (.+) period (.+)')
     with open(filename) as f:
         for line in f:
             maybe = regex.match(line)
             if maybe:
-                to_return[int(maybe[1])] = {'teacher': maybe[2], 'course': maybe[3], 'period': int(maybe[4])}
+                to_return[int(maybe[1])] = {'teacher': maybe[2], 'course': maybe[3], 'period': maybe[4]}
     return to_return
 
 
@@ -29,13 +29,13 @@ def get_solution(filename):
 
 def test_teachers_from_solution():
     correspondence = {
-1: {'teacher': 'Mrs. A', 'course': 'English 9', 'period': 1},
-2: {'teacher': 'Mr. B', 'course': 'English 9', 'period': 1},
-3: {'teacher': 'Mrs. C', 'course': 'English 9', 'period': 1}
+1: {'teacher': 'Mrs. A', 'course': 'English 9', 'period': "1"},
+2: {'teacher': 'Mr. B', 'course': 'English 9', 'period': "1"},
+3: {'teacher': 'Mrs. C', 'course': 'English 9', 'period': "1"},
 }
-    assert teachers_from_solution(1, "English 9", [1], correspondence) == ["Mrs. A",]
-    assert teachers_from_solution(1, "English 9", [1, 2], correspondence) == ["Mrs. A", "Mr. B"]
-    assert teachers_from_solution(1, "English 10", [1, 2], correspondence) == []
+    assert teachers_from_solution("1", "English 9", [1], correspondence) == ["Mrs. A",]
+    assert teachers_from_solution("1", "English 9", [1, 2], correspondence) == ["Mrs. A", "Mr. B"]
+    assert teachers_from_solution("1", "English 10", [1, 2], correspondence) == []
 
 
 def teachers_from_correspondence(correspondence):
@@ -54,7 +54,7 @@ def courses_from_correspondence(correspondence):
 
 def periods_from_correspondence(correspondence):
     return set([
-        int(correspondence[key]["period"])
+        correspondence[key]["period"]
         for key in correspondence
     ])
 

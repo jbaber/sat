@@ -3,7 +3,7 @@
 from itertools import combinations
 from itertools import product
 
-PERIODS = (1, 2, 3, 4)
+PERIODS = ("1", "2", "3", "4", "Lunch")
 TEACHERS = ("Mrs. A", "Mr. B", "Mrs. C", "Dr. D")
 COURSES = ("English 9", "English 10", "English 11")
 
@@ -101,9 +101,9 @@ def cnf_output(clauses):
 
 def main():
 
-    # Each course offered at least once each period
+    # Each course offered at least once each period except lunch
     for course in COURSES:
-        for period in PERIODS:
+        for period in set(PERIODS).difference({"Lunch"}):
             print(cnf_output([[f(period, teacher, course) for teacher in TEACHERS]]))
 
     # No teacher teaches two courses in one period
@@ -121,6 +121,13 @@ def main():
         rows = [[-f(period, teacher, course) for course in COURSES] for period in PERIODS]
         for tup in product(*rows):
             print(cnf_output([tup]))
+
+    # Nobody teaches during Lunch
+    for tup in at_most_n_true(0, [
+        f("Lunch", teacher, course)
+        for (teacher, course) in product(TEACHERS, COURSES)
+    ]):
+        print(cnf_output([tup]))
 
 
 if __name__ == "__main__":
