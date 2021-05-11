@@ -69,6 +69,10 @@ def teachers_from_solution(period, course, solution, correspondence):
 
 
 def plot_solution(solution, correspondence):
+    if solution == None:
+        print("Unsatisfiable")
+        return
+
     periods = periods_from_correspondence(correspondence)
     courses = courses_from_correspondence(correspondence)
 

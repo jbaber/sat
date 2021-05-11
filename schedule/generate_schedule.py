@@ -3,8 +3,8 @@
 from itertools import combinations
 from itertools import product
 
-PERIODS = (1, 2, 3)
-TEACHERS = ("Mrs. A", "Mr. B", "Mrs. C")
+PERIODS = (1, 2, 3, 4)
+TEACHERS = ("Mrs. A", "Mr. B", "Mrs. C", "Dr. D")
 COURSES = ("English 9", "English 10", "English 11")
 
 # Take schedule coords and value to individual variables
@@ -106,21 +106,21 @@ def main():
         for period in PERIODS:
             print(cnf_output([[f(period, teacher, course) for teacher in TEACHERS]]))
 
-    #  # No teacher teaches two courses in one period
-    #  for period in PERIODS:
-    #      for teacher in TEACHERS:
-    #          for course_pair in combinations(COURSES, 2):
-    #              print(
-    #                  cnf_output(
-    #                      [[-f(period, teacher, course_pair[0]), -f(period, teacher, course_pair[1])]]
-    #                  )
-    #              )
+    # No teacher teaches two courses in one period
+    for period in PERIODS:
+        for teacher in TEACHERS:
+            for course_pair in combinations(COURSES, 2):
+                print(
+                    cnf_output(
+                        [[-f(period, teacher, course_pair[0]), -f(period, teacher, course_pair[1])]]
+                    )
+                )
 
-    #  # Every teacher gets at least one period off
-    #  for teacher in TEACHERS:
-    #      rows = [[-f(period, teacher, course) for course in COURSES] for period in PERIODS]
-    #      for tup in product(*rows):
-    #          print(cnf_output([tup]))
+    # Every teacher gets at least one period off
+    for teacher in TEACHERS:
+        rows = [[-f(period, teacher, course) for course in COURSES] for period in PERIODS]
+        for tup in product(*rows):
+            print(cnf_output([tup]))
 
 
 if __name__ == "__main__":
