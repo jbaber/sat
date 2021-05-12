@@ -93,6 +93,30 @@ def at_least_n_true(n, variables):
             yield combo
 
 
+def test_ands_from_or():
+    # (1) v () = (1)
+    assert ands_from_or((1,), ()) == [(1,)]
+    # (1) v (2) = (1 v 2)
+    assert ands_from_or((1,), (2,)) == ([(1, 2)])
+    # (1 ^ 2) v 3 = (1 v 3) ^ (2 v 3)
+    assert ands_from_or((1, 2), (3,)) == [(1, 3), (2, 3)]
+    # (1) v (2 ^ 3) = (1 v 2) ^ (1 v 3)
+    assert ands_from_or((1,), (2, 3)) == [(1, 2), (1, 3)]
+    # (1 ^ 2) v (3 ^ 4) = (1 v (3 ^ 4)) ^ (2 v (3 ^ 4)) = (1v3 ^ 1v4) ^ (2v3 ^ 2v4)
+    assert ands_from_or((1, 2), (3, 4)) == [(1, 3), (1, 4), (2, 3), (2, 4)]
+    # (1) v (2 ^ 3 ^ 4) = (1v2 ^ 1v3 ^ 1v4)
+    assert ands_from_or((1,), (2, 3, 4)) == [(1, 2), (1, 3), (1, 4)]
+
+
+# Convert (1v2v3v4) ^ (5v6v7v8) to (.v.v.) ^ (.v.v.) ^ (.v.v.) ^ ...
+def ands_from_or(lefty, righty):
+    if len(lefty) == 0:
+        return [righty]
+    if len(righty) == 0:
+        return [lefty]
+
+    return list(product(lefty, righty))
+
 
 def cnf_output(clauses):
     to_return = []
