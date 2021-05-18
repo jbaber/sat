@@ -93,42 +93,42 @@ def at_least_n_true(n, variables):
             yield combo
 
 
-def test_ands_from_ors():
+def test_and_of_ors_from_ors_of_ands():
     # 1 v 3^4 v 5^6 = (1v3 ^ 1v4) v (5^6) = ((1v3 ^ 1v4) v 5) ^ ((1v3 ^ 1v4) v 6)
     # = (1v3v5 ^ 1v4v5) ^ (1v3v6 ^ 1v4v6)
-    assert set(ands_from_ors(((1,), (3, 4), (5,6)))) == set([(1, 3, 5), (1, 4, 5), (1, 3, 6), (1, 4, 6)])
+    assert set(and_of_ors_from_ors_of_ands(((1,), (3, 4), (5,6)))) == set([(1, 3, 5), (1, 4, 5), (1, 3, 6), (1, 4, 6)])
     # 1^2 v 3^4 v 5^6 = (1 v (3^4 v 5^6)) ^ (2 v (364 v 5^6))
     # = (1v3v5 ^ 1v4v5) ^ (1v3v6 ^ 1v4v6) ^ (2v3v5 ^ 2v4v5) ^ (2v3v6 ^ 2v4v6)
-    assert set(ands_from_ors(((1, 2), (3, 4), (5, 6)))) == \
+    assert set(and_of_ors_from_ors_of_ands(((1, 2), (3, 4), (5, 6)))) == \
     set(((1, 3, 5), (1, 4, 5), (1, 3, 6), (1, 4, 6), (2, 3, 5), (2, 4, 5), (2, 3, 6),  (2, 4, 6),))
 
-    # Degrades to ands_from_or (copying those tests)
-    assert ands_from_ors(((1,), ())) == [(1,)]
-    assert ands_from_ors(((1,), (2,))) == [((1, 2))]
-    assert ands_from_ors(((1, 2), (3,))) == [(1, 3), (2, 3)]
-    assert ands_from_ors(((1,), (2, 3))) == [(1, 2), (1, 3)]
-    assert ands_from_ors(((1, 2), (3, 4))) == [(1, 3), (1, 4), (2, 3), (2, 4)]
-    assert ands_from_ors(((1,), (2, 3, 4))) == [(1, 2), (1, 3), (1, 4)]
+    # Degrades to and_of_ors_from_or_of_ands (copying those tests)
+    assert and_of_ors_from_ors_of_ands(((1,), ())) == [(1,)]
+    assert and_of_ors_from_ors_of_ands(((1,), (2,))) == [((1, 2))]
+    assert and_of_ors_from_ors_of_ands(((1, 2), (3,))) == [(1, 3), (2, 3)]
+    assert and_of_ors_from_ors_of_ands(((1,), (2, 3))) == [(1, 2), (1, 3)]
+    assert and_of_ors_from_ors_of_ands(((1, 2), (3, 4))) == [(1, 3), (1, 4), (2, 3), (2, 4)]
+    assert and_of_ors_from_ors_of_ands(((1,), (2, 3, 4))) == [(1, 2), (1, 3), (1, 4)]
 
 
 
-def test_ands_from_or():
+def test_and_of_ors_from_or_of_ands():
     # (1) v () = (1)
-    assert ands_from_or((1,), ()) == [(1,)]
+    assert and_of_ors_from_or_of_ands((1,), ()) == [(1,)]
     # (1) v (2) = (1 v 2)
-    assert ands_from_or((1,), (2,)) == ([(1, 2)])
+    assert and_of_ors_from_or_of_ands((1,), (2,)) == ([(1, 2)])
     # (1 ^ 2) v 3 = (1 v 3) ^ (2 v 3)
-    assert ands_from_or((1, 2), (3,)) == [(1, 3), (2, 3)]
+    assert and_of_ors_from_or_of_ands((1, 2), (3,)) == [(1, 3), (2, 3)]
     # (1) v (2 ^ 3) = (1 v 2) ^ (1 v 3)
-    assert ands_from_or((1,), (2, 3)) == [(1, 2), (1, 3)]
+    assert and_of_ors_from_or_of_ands((1,), (2, 3)) == [(1, 2), (1, 3)]
     # (1 ^ 2) v (3 ^ 4) = (1 v (3 ^ 4)) ^ (2 v (3 ^ 4)) = (1v3 ^ 1v4) ^ (2v3 ^ 2v4)
-    assert ands_from_or((1, 2), (3, 4)) == [(1, 3), (1, 4), (2, 3), (2, 4)]
+    assert and_of_ors_from_or_of_ands((1, 2), (3, 4)) == [(1, 3), (1, 4), (2, 3), (2, 4)]
     # (1) v (2 ^ 3 ^ 4) = (1v2 ^ 1v3 ^ 1v4)
-    assert ands_from_or((1,), (2, 3, 4)) == [(1, 2), (1, 3), (1, 4)]
+    assert and_of_ors_from_or_of_ands((1,), (2, 3, 4)) == [(1, 2), (1, 3), (1, 4)]
 
 
-# Convert (1v2v3v4) ^ (5v6v7v8) to (.v.v.) ^ (.v.v.) ^ (.v.v.) ^ ...
-def ands_from_or(lefty, righty):
+# Convert (1^2^3^4) v (5^6^7^8) to (.v.v.) ^ (.v.v.) ^ (.v.v.) ^ ...
+def and_of_ors_from_or_of_ands(lefty, righty):
     if len(lefty) == 0:
         return [righty]
     if len(righty) == 0:
@@ -137,14 +137,14 @@ def ands_from_or(lefty, righty):
     return list(product(*[lefty, righty]))
 
 
-# Like ands_from_or, but takes morethan two
-def ands_from_ors(arr_of_ands):
+# Like and_of_ors_from_or_of_ands, but takes more than two
+def and_of_ors_from_ors_of_ands(arr_of_ands):
 
     # Remove empty arrays since they make the product empty
     arr_of_ands = [
         arr
         for arr in arr_of_ands
-        if len(arr) > 0
+        if arr != None and len(arr) > 0
     ]
     return list(product(*arr_of_ands))
 
@@ -200,10 +200,25 @@ def main():
                 )
 
     # Every teacher gets at least one non-lunch period off
+    non_lunch = set(periods).difference({"Lunch"})
+
+    def period_off_ands(teacher, period):
+        return [
+            -f(period, teacher, course, config)
+            for course in courses
+        ]
+
     for teacher in teachers:
-        rows = [[-f(period, teacher, course, config) for course in set(courses).difference({"Lunch"})] for period in periods]
-        for tup in product(*rows):
-            print(cnf_output([tup]))
+
+        # p1:(-1^-2^-3) v p2:(-1^-2^-3) v ...
+        ors_of_ands  = [
+            period_off_ands(teacher, period)
+            for period in non_lunch
+        ]
+
+        and_of_ors = and_of_ors_from_ors_of_ands(ors_of_ands)
+
+        print(cnf_output(and_of_ors))
 
     # Nobody teaches during Lunch
     for tup in at_most_n_true(0, [
