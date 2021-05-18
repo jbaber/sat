@@ -185,7 +185,6 @@ def main():
         [-f(period, "Mrs. A", "Yearbook", config)]
         for period in periods
     ])
-    print(is_this_printing, file=sys.stderr)
     print(is_this_printing)
 
 
