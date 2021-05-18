@@ -93,6 +93,25 @@ def at_least_n_true(n, variables):
             yield combo
 
 
+def test_ands_from_ors():
+    # 1 v 3^4 v 5^6 = (1v3 ^ 1v4) v (5^6) = ((1v3 ^ 1v4) v 5) ^ ((1v3 ^ 1v4) v 6)
+    # = (1v3v5 ^ 1v4v5) ^ (1v3v6 ^ 1v4v6)
+    assert set(ands_from_ors(((1,), (3, 4), (5,6)))) == set([(1, 3, 5), (1, 4, 5), (1, 3, 6), (1, 4, 6)])
+    # 1^2 v 3^4 v 5^6 = (1 v (3^4 v 5^6)) ^ (2 v (364 v 5^6))
+    # = (1v3v5 ^ 1v4v5) ^ (1v3v6 ^ 1v4v6) ^ (2v3v5 ^ 2v4v5) ^ (2v3v6 ^ 2v4v6)
+    assert set(ands_from_ors(((1, 2), (3, 4), (5, 6)))) == \
+    set(((1, 3, 5), (1, 4, 5), (1, 3, 6), (1, 4, 6), (2, 3, 5), (2, 4, 5), (2, 3, 6),  (2, 4, 6),))
+
+    # Degrades to ands_from_or (copying those tests)
+    assert ands_from_ors(((1,), ())) == [(1,)]
+    assert ands_from_ors(((1,), (2,))) == [((1, 2))]
+    assert ands_from_ors(((1, 2), (3,))) == [(1, 3), (2, 3)]
+    assert ands_from_ors(((1,), (2, 3))) == [(1, 2), (1, 3)]
+    assert ands_from_ors(((1, 2), (3, 4))) == [(1, 3), (1, 4), (2, 3), (2, 4)]
+    assert ands_from_ors(((1,), (2, 3, 4))) == [(1, 2), (1, 3), (1, 4)]
+
+
+
 def test_ands_from_or():
     # (1) v () = (1)
     assert ands_from_or((1,), ()) == [(1,)]
@@ -115,7 +134,19 @@ def ands_from_or(lefty, righty):
     if len(righty) == 0:
         return [lefty]
 
-    return list(product(lefty, righty))
+    return list(product(*[lefty, righty]))
+
+
+# Like ands_from_or, but takes morethan two
+def ands_from_ors(arr_of_ands):
+
+    # Remove empty arrays since they make the product empty
+    arr_of_ands = [
+        arr
+        for arr in arr_of_ands
+        if len(arr) > 0
+    ]
+    return list(product(*arr_of_ands))
 
 
 def cnf_output(clauses):
