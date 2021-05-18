@@ -146,14 +146,14 @@ def and_of_ors_from_ors_of_ands(arr_of_ands):
         for arr in arr_of_ands
         if arr != None and len(arr) > 0
     ]
-    return list(product(*arr_of_ands))
+
+    for tup in product(*arr_of_ands):
+        yield tup
 
 
 def cnf_output(clauses):
-    to_return = []
     for clause in clauses:
-        to_return.append(" ".join(str(x) for x in clause) + " 0")
-    return "\n".join(to_return)
+        yield " ".join(str(x) for x in clause) + " 0"
 
 
 def main():
@@ -172,31 +172,32 @@ def main():
     # Each non-Yearbook course offered at least once each period except lunch
     for course in set(courses).difference({"Yearbook"}):
         for period in set(periods).difference({"Lunch"}):
-            print(cnf_output([[f(period, teacher, course, config) for teacher in teachers]]))
+            for line in cnf_output([[f(period, teacher, course, config) for teacher in teachers]]):
+                print(line)
 
     # Yearbook is taught exactly once in periods 3 or 4
-    print(cnf_output(exactly_1_true([
+    for line in cnf_output(exactly_1_true([
         f(period, teacher, "Yearbook", config)
         for (period, teacher) in product(["3", "4",], teachers)
-    ])))
+    ])):
+        print(line)
 
     # Mrs. A can't teach Yearbook
-    is_this_printing = cnf_output([
+    for line in cnf_output([
         [-f(period, "Mrs. A", "Yearbook", config)]
         for period in periods
-    ])
-    print(is_this_printing)
+    ]):
+        print(line)
 
 
     # No teacher teaches two courses in one period
     for period in periods:
         for teacher in teachers:
             for course_pair in combinations(courses, 2):
-                print(
-                    cnf_output(
+                for line in cnf_output(
                         [[-f(period, teacher, course_pair[0], config), -f(period, teacher, course_pair[1], config)]]
-                    )
-                )
+                    ):
+                    print(line)
 
     # Every teacher gets at least one non-lunch period off
     non_lunch = set(periods).difference({"Lunch"})
@@ -217,35 +218,28 @@ def main():
 
         and_of_ors = and_of_ors_from_ors_of_ands(ors_of_ands)
 
-        print(cnf_output(and_of_ors))
+        for line in cnf_output(and_of_ors):
+            print(line)
 
 
     # Mr. B gets at least two non-lunch periods off
-    def two_period_off_ands(teacher, pair_of_periods):
-        return [
-            -f(pair_of_periods[0], teacher, course, config)
-            for course in courses
-        ] + [
-            -f(pair_of_periods[1], teacher, course, config)
-            for course in courses
-        ]
-
-    ors_of_ands = [
-        two_period_off_ands("Mr. B", pair)
-        for pair in combinations(non_lunch, 2)
+    # Try at most 4 true of working in every period
+    all_mrb_jobs = [
+        f(period, "Mr. B", course, config)
+        for period in non_lunch
+        for course in courses
     ]
+    for line in cnf_output(at_most_n_true(4, all_mrb_jobs)):
+        print(line)
 
-    and_of_ors = and_of_ors_from_ors_of_ands(ors_of_ands)
-
-    print(cnf_output(and_of_ors))
-
-
+    
     # Nobody teaches during Lunch
     for tup in at_most_n_true(0, [
         f("Lunch", teacher, course, config)
         for (teacher, course) in product(teachers, courses)
     ]):
-        print(cnf_output([tup]))
+        for line in cnf_output([tup]):
+            print(line)
 
 
 if __name__ == "__main__":
