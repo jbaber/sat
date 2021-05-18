@@ -210,7 +210,7 @@ def main():
     for teacher in teachers:
 
         # p1:(-1^-2^-3) v p2:(-1^-2^-3) v ...
-        ors_of_ands  = [
+        ors_of_ands = [
             period_off_ands(teacher, period)
             for period in non_lunch
         ]
@@ -218,6 +218,27 @@ def main():
         and_of_ors = and_of_ors_from_ors_of_ands(ors_of_ands)
 
         print(cnf_output(and_of_ors))
+
+
+    # Mr. B gets at least two non-lunch periods off
+    def two_period_off_ands(teacher, pair_of_periods):
+        return [
+            -f(pair_of_periods[0], teacher, course, config)
+            for course in courses
+        ] + [
+            -f(pair_of_periods[1], teacher, course, config)
+            for course in courses
+        ]
+
+    ors_of_ands = [
+        two_period_off_ands("Mr. B", pair)
+        for pair in combinations(non_lunch, 2)
+    ]
+
+    and_of_ors = and_of_ors_from_ors_of_ands(ors_of_ands)
+
+    print(cnf_output(and_of_ors))
+
 
     # Nobody teaches during Lunch
     for tup in at_most_n_true(0, [
